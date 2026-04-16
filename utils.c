@@ -3,6 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 
+
 int str_length(const char* string) {
     int total_char = 0;
     int letters_count = 0;
@@ -57,6 +58,25 @@ char* to_lower(const char* string) { // do it manually
     return lowercase;
 }
 
+char* title_case(const char* string) { // do it manually
+    int len = strlen(string);
+    char* titlecase = malloc((len + 1) * sizeof(char));
+    if (string == NULL) return NULL;
+
+    titlecase[0] = toupper(string[0]);
+    for (int i = 1; string[i] != '\0'; i++) {
+        if (string[i - 1] == ' ') {
+            titlecase[i] = toupper(string[i]);
+        } else {
+            titlecase[i] = tolower(string[i]);
+        }
+    }
+    titlecase[len] = '\0';
+    
+    return titlecase;
+}
+
+
 int main() {
     // code here
     char str_to_be_given[100];
@@ -64,7 +84,8 @@ int main() {
 
     printf("Total char count / str length: %d\n", str_length(str_to_be_given));
     printf("Uppercase: %s\n", to_upper(str_to_be_given));
-    printf("Lowercase: %s", to_lower(str_to_be_given));
+    printf("Lowercase: %s\n", to_lower(str_to_be_given));
+    printf("Title Case: %s", title_case(str_to_be_given));
     // to_upper(str_to_be_given);
 
     return 0;
