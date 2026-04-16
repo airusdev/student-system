@@ -86,7 +86,6 @@ int main() {
     printf("Uppercase: %s\n", to_upper(str_to_be_given));
     printf("Lowercase: %s\n", to_lower(str_to_be_given));
     printf("Title Case: %s", title_case(str_to_be_given));
-    // to_upper(str_to_be_given);
 
     return 0;
 }
