@@ -3,7 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 
-
+// -- STRING
 int str_length(const char* string) {
     int total_char = 0;
     int letters_count = 0;
@@ -77,15 +77,28 @@ char* title_case(const char* string) { // do it manually
 }
 
 
+// -- NUMBER
+float add(float first_num, float second_num) {
+    return (first_num + second_num);
+}
+
+
 int main() {
-    // code here
     char str_to_be_given[100];
+    float first_num;
+    float second_num;
+
+    printf("Please give me a sentence to work with:\n");
     scanf("%[^\n]%*c", &str_to_be_given);
 
     printf("Total char count / str length: %d\n", str_length(str_to_be_given));
     printf("Uppercase: %s\n", to_upper(str_to_be_given));
     printf("Lowercase: %s\n", to_lower(str_to_be_given));
-    printf("Title Case: %s", title_case(str_to_be_given));
+    printf("Title Case: %s\n", title_case(str_to_be_given));
+    
+    printf("Give me two numbers: N_1 N_2\n");
+    scanf("%f %f", &first_num, &second_num);
+    printf("Sum: %.1f", add(first_num, second_num));
 
     return 0;
 }
