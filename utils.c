@@ -63,7 +63,7 @@ char* title_case(const char* string) { // do it manually
     char* titlecase = malloc((len + 1) * sizeof(char));
     if (string == NULL) return NULL;
 
-    titlecase[0] = toupper(string[0]);
+    if (len > 0) titlecase[0] = toupper(string[0]);
     for (int i = 1; string[i] != '\0'; i++) {
         if (string[i - 1] == ' ') {
             titlecase[i] = toupper(string[i]);
@@ -82,6 +82,25 @@ float add(float first_num, float second_num) {
     return (first_num + second_num);
 }
 
+float subtract(float first_num, float second_num) {
+    return (first_num - second_num);
+}
+
+float multiply(float first_num, float second_num) {
+    return (first_num * second_num);
+}
+
+float safe_divide(float first_num, float second_num, int* error) {
+    if (second_num == 0) {
+        *error = 1;
+        return 0;
+    }
+    
+    *error = 0;
+    return first_num / second_num;
+}
+
+
 
 int main() {
     char str_to_be_given[100];
@@ -92,13 +111,34 @@ int main() {
     scanf("%[^\n]%*c", &str_to_be_given);
 
     printf("Total char count / str length: %d\n", str_length(str_to_be_given));
-    printf("Uppercase: %s\n", to_upper(str_to_be_given));
-    printf("Lowercase: %s\n", to_lower(str_to_be_given));
-    printf("Title Case: %s\n", title_case(str_to_be_given));
+
+    char* upper = to_upper(str_to_be_given);
+    char* lower = to_lower(str_to_be_given);
+    char* titlecase = title_case(str_to_be_given);
+
+    printf("Uppercase: %s\n", upper);
+    free(upper);
+    
+    printf("Lowercase: %s\n", lower);
+    free(lower);
+
+    printf("Title Case: %s\n", titlecase);
+    free(titlecase);
     
     printf("Give me two numbers: N_1 N_2\n");
-    scanf("%f %f", &first_num, &second_num);
-    printf("Sum: %.1f", add(first_num, second_num));
+    scanf(" %f %f", &first_num, &second_num);
+    printf("Sum: %.1f\n", add(first_num, second_num));
+    printf("Difference: %.1f\n", subtract(first_num, second_num));
+    printf("Product: %.1f\n", multiply(first_num, second_num));
+
+    int my_error;
+    float result = safe_divide(first_num, second_num, &my_error);
+
+    if (my_error) {
+        printf("Quotient: ERROR\n");
+    } else if (!my_error) {
+        printf("Quotient: %.1f\n", result);
+    }
 
     return 0;
 }
