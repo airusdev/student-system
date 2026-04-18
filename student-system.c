@@ -18,6 +18,10 @@ void add_student(const char* student) {
     student_counter = student_counter + 1;
 }
 
+void print_student(int index) {
+    printf("%d. %s\n\n", index + 1, saved_student_names[index]);
+}
+
 
 int main() {
 	bool accepted_value = false;
@@ -41,17 +45,23 @@ int main() {
 			scanf(" %[^\n]%*c", student_name_given);
 
 			add_student(student_name_given);
-            for (int i = 0; i < student_counter; i++) {
-                free(saved_student_names[i]);
-            }
 
 		} else if (choice == 2) {
-			printf("placeholder for view students\n\n");    
+            int index = 0;
+            printf("Please give the index of the student's name you want to print: ");
+            scanf(" %d", &index);
+            print_student(index - 1);
+
+			//printf("placeholder for view students\n\n");    
 		} else if (choice == 3) {
 			printf("Goodbye!\n\n");
 			break;
 		}
 		choice = 0;
 	}
+
+    for (int i = 0; i < student_counter; i++) {
+        free(saved_student_names[i]);
+    }
 	return 0;
 }
