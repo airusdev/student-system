@@ -1,9 +1,8 @@
-// to add: input validation on the (1) (2) (3), input must be a number
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <ctype.h>
 
 char* saved_student_names[50];
 int student_counter = 0;
@@ -42,7 +41,7 @@ int main() {
                 continue;
             }
 
-            for (int i = 0; i < (sizeof(choice) / sizeof(choice[0])); i++) {
+            for (int i = 0; i < (sizeof(valid_answers) / sizeof(valid_answers[0])); i++) {
                 if (choice[0] == valid_answers[i]) {
                     accepted_value = true;
                 }
@@ -56,20 +55,52 @@ int main() {
         }
 
 		if (choice[0] == '1') { // we need to do an if condition, we have to make sure student_name_given has a value first
-            char student_name_given[100];
-            
-            printf("Enter student name: \n");
-			scanf(" %[^\n]%*c", student_name_given);
+            if (student_counter == 50) { // CHECK IF STUDENT IS FULL ALREADY
+                printf("Slots are full!\n");
+                continue;
+            }
 
-			add_student(student_name_given);
+            char name[100];
+            printf("Enter student name: \n");
+            fgets(name, 100, stdin);
+            name[strcspn(name, "\n")] = '\0';
+
+            // Empty ?
+            if (strlen(name) == 0) {
+                printf("The system doesn't accept an empty input.\n\n");
+                continue;
+            }
+
+            // All spaces ?
+            int all_spaces = 1;
+            for (int i = 0; name[i] != '\0'; i++) {
+                if (!isspace(name[i])) all_spaces = 0;
+            }
+
+            if (all_spaces == true) { // if all spaces then print out an error and make user repeat the process
+                printf("The system doesn't accept an input of all spaces\n\n");
+                continue;
+            }
+
+			add_student(name);
 
 		} else if (choice[0] == '2') {
-            int index = 0;
-            printf("Please give the index of the student's name you want to print: ");
-            scanf(" %d", &index);
-            print_student(index - 1);
+            if (student_counter == 0) {
+                printf("No student added yet!\n");
+                continue;
+            }
 
-			//printf("placeholder for view students\n\n");
+            int index = 0;                             
+            printf("Please give a valid index (0-49)\n");
+            scanf(" %d", &index);
+
+            if (index < 0 || index >= student_counter) {
+                printf("Invalid index!");
+                continue;
+            } else {
+                print_student(index);
+            }
+
 		} else if (choice[0] == '3') {
 			printf("Goodbye!\n\n");
 			break;
