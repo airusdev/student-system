@@ -115,9 +115,6 @@ int main() {
                 printf("--------------------");
                 printf("Total: %d student(s)", student_counter);
             }
-
-			printf("Goodbye!\n\n");
-			break;
 		} else if (choice[0] == '4') {
             printf("Goodbye!\n\n");
             break;
