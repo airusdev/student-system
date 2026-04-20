@@ -27,13 +27,13 @@ void print_student(int index) {
 int main() {
 	bool accepted_value = false;
     char choice[64] = {0};
-    int valid_answers[] = {'1', '2', '3'};
+    int valid_answers[] = {'1', '2', '3', '4'}; // TO FIX! INSTEAD OF USING ARRAY, JUST DO IF STATEMENT CONDITION
 	//int choice = 0;
 
 	while (1) {
         accepted_value = false; // wait until valid choice
         while (!accepted_value) {
-            printf("Options:\n (1) Add Student\n (2) View Students\n (3) Exit\n\n");
+            printf("Options:\n (1) Add Student\n (2) View Students\n (3) View All Students\n (4) Exit\n\n");
             scanf(" %[^\n]%*c", choice);
 
             if (strlen(choice) > 1) {
@@ -54,8 +54,8 @@ int main() {
             }
         }
 
-		if (choice[0] == '1') { // we need to do an if condition, we have to make sure student_name_given has a value first
-            if (student_counter == 50) { // CHECK IF STUDENT IS FULL ALREADY
+		if (choice[0] == '1') {
+            if (student_counter == 50) {
                 printf("Slots are full!\n");
                 continue;
             }
@@ -77,7 +77,7 @@ int main() {
                 if (!isspace(name[i])) all_spaces = 0;
             }
 
-            if (all_spaces == true) { // if all spaces then print out an error and make user repeat the process
+            if (all_spaces == true) {
                 printf("The system doesn't accept an input of all spaces\n\n");
                 continue;
             }
@@ -102,9 +102,26 @@ int main() {
             }
 
 		} else if (choice[0] == '3') {
+            if (student_counter == 0) {
+                printf("The student list is empty!");
+                continue;
+            } else {
+                printf("\n--- Student List ---\n");
+
+                for (int i = 0; i < student_counter; i++) {
+                    printf("%d. %s\n", i + 1, saved_student_names[i]);
+                }
+
+                printf("--------------------");
+                printf("Total: %d student(s)", student_counter);
+            }
+
 			printf("Goodbye!\n\n");
 			break;
-		}
+		} else if (choice[0] == '4') {
+            printf("Goodbye!\n\n");
+            break;
+        }
 	}
 
     choice[0] = '\0';
