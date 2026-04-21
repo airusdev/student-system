@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdbool.h>
 
 // -- STRING
 int str_length(const char* string) {
@@ -100,7 +101,69 @@ float safe_divide(float first_num, float second_num, int* error) {
     return first_num / second_num;
 }
 
+int digit_sum(int num) {
+    int sum = 0;
 
+    while (num > 0) {
+        int temp_num = num % 10;
+        sum = sum + temp_num;
+        num = num / 10;
+    }
+
+    return sum;
+}
+
+int digit_count(int num) {
+    int num_count = 0;
+
+    while (num > 0) {
+        num_count = num_count + 1;
+        num = num / 10;
+    }
+    
+    return num_count;
+}
+
+bool is_palindrome(int num) { // i want to avoid using string for now.
+    if (num == 0) {
+        return true;
+    }
+
+    bool is_palindrome = true;
+    int num_length = digit_count(num);
+    int *num_arr = malloc(num_length * sizeof(int));
+
+    for (int *p = num_arr; p < num_arr + num_length; p++) {
+        *p = num % 10;
+        num = num / 10;
+    }
+
+    int *p = num_arr + num_length - 1;
+    int index = 0;
+    
+    while (p >= num_arr) {
+        if (*p != num_arr[index]) {
+            is_palindrome = false;
+            break;
+        }
+
+        index = index + 1;
+        p--;
+    }
+
+    free(num_arr);
+    return is_palindrome;
+    // "%s\n", is_palindrome ? "Yes" : "No" in the caller
+}   
+
+void reverse_number(int num) {
+    if (num == 0) return;
+    while (num > 0) {
+        int temp_num = num % 10;
+        printf("%d", temp_num);
+        num = num / 10;
+    }
+}
 
 int main() {
     char str_to_be_given[100];
