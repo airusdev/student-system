@@ -3,6 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 // -- STRING
 int str_length(const char* string) {
@@ -164,6 +165,53 @@ void reverse_number(int num) {
         num = num / 10;
     }
 }
+
+char* to_binary_string(unsigned int num) {
+    char *binary_array = malloc(9 * sizeof(char));
+    uint8_t value = num;
+
+    for (int i = 0; i < 8; i++) {
+        int reverse_index = 7 - i;
+        int desired_value = (value >> i) & 1;
+        binary_array[reverse_index] = desired_value + '0';
+    }
+
+    return binary_array;
+}
+
+int check_bit(int num, int bit_position) {
+    if (bit_position > 7) return 0;
+    uint8_t bit_num = num;
+    
+    if (!(bit_num >> bit_position & 1)) {
+        return 0;
+    }
+    else {
+        return 1;
+    }
+}
+
+char* get_permission_flags(int num) {
+    uint8_t binary_num = num;
+    char *output = malloc(4 * sizeof(char));
+    char valid_output[] = {'x', 'w', 'r'};
+
+    for (int i = 0; i < 3; i++) {
+        int reverse_index = 2 - i;
+        int desired_value = binary_num & 1;
+        binary_num = binary_num >> 1;
+        
+        if (desired_value == 1) {
+            output[reverse_index] = valid_output[i];
+        }
+        else {
+            output[reverse_index] = '-';
+        }
+    }
+    output[3] = '\0';
+    return output;
+}
+
 
 int main() {
     char str_to_be_given[100];
