@@ -27,7 +27,6 @@ void diamond(int num) {
     }
 }
 
-
 void pyramid(int num) {
     int size = (num * 2) - 1;
     int middle = size / 2;
@@ -44,12 +43,33 @@ void pyramid(int num) {
     }
 }
 
-
+void custom_character(int num, char custom_char) {
+    int size = (num * 2) - 1;
+    int middle = size / 2;
+    for (int i = 0; i < num; i++) {
+        for (int k = 0; k < size; k++) {
+            if (k >= (middle - i) && (k <= (middle + i))) {
+                printf("%c", custom_char);
+            } else {
+                printf(" ");
+            }
+        }
+        printf("\n");
+    }    
+}
 
 int main(void) {
-    int num = 3;
-    diamond(num);
-    //pyramid(num);
+    int num;
+    char custom_char;
+
+    printf("Enter character: \n");
+    scanf(" %c", &custom_char);
+
+    printf("Enter size: \n");
+    scanf(" %d", &num);
+
+    custom_character(num, custom_char);
+
     return 0;
 }
 
