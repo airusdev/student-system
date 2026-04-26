@@ -5,22 +5,27 @@
 #include <ctype.h>
 
 char* saved_student_names[50];
+float saved_student_grades[50];
 int student_counter = 0;
 
-void add_student(const char* student) {
-	if (student == NULL) return;
+void add_student(const char* student, const char* grade) {
+	if (student == NULL || grade == NULL) return;
 	char* saved_name; // the system saves only one name for now
+    float saved_grade;    
 
+    saved_grade = atof(grade);
 	saved_name = malloc(strlen(student) + 1);
 	strcpy(saved_name, student);
 
+    saved_student_grades[student_counter] = saved_grade;
     saved_student_names[student_counter] = saved_name;
-    printf("Student saved successfully: %s\n\n", saved_student_names[student_counter]);
+    printf("Student saved successfully: %s %.1f\n\n", saved_student_names[student_counter], saved_student_grades[student_counter]);
+
     student_counter = student_counter + 1;
 }
 
 void print_student(int index) {
-    printf("%d. %s\n\n", index + 1, saved_student_names[index]);
+    printf("%d. %s - %.1f\n\n", index + 1, saved_student_names[index], saved_student_grades[index]);
 }
 
 
@@ -61,6 +66,8 @@ int main() {
             }
 
             char name[100];
+            char grade[100];
+
             printf("Enter student name: \n");
             fgets(name, 100, stdin);
             name[strcspn(name, "\n")] = '\0';
@@ -82,7 +89,28 @@ int main() {
                 continue;
             }
 
-			add_student(name);
+            printf("Enter student's grade: \n");
+            fgets(grade, 100, stdin);
+            grade[strcspn(grade, "\n")] = '\0';
+
+            // empty?
+            if (strlen(grade) == 0) {
+                printf("The system doesn't accept an empty input");
+                break;
+            }
+
+            // all spaces ? 
+            int grade_is_spaces = 1;
+            for (int i = 0; grade[i] != '\0'; i++) {
+                if (!isspace(name[i])) grade_is_spaces = 0;
+            }
+
+            if (grade_is_spaces == true) {
+                printf("The system doesn's accept an input of all spaces\n\n");
+                break;
+            }
+
+			add_student(name, grade);
 
 		} else if (choice[0] == '2') {
             if (student_counter == 0) {
@@ -109,11 +137,11 @@ int main() {
                 printf("\n--- Student List ---\n");
 
                 for (int i = 0; i < student_counter; i++) {
-                    printf("%d. %s\n", i + 1, saved_student_names[i]);
+                    printf("%d. %s - %.1f\n", i + 1, saved_student_names[i], saved_student_grades[i]);
                 }
 
-                printf("--------------------");
-                printf("Total: %d student(s)", student_counter);
+                printf("--------------------\n");
+                printf("Total: %d student(s)\n\n", student_counter);
             }
 		} else if (choice[0] == '4') {
             printf("Goodbye!\n\n");
