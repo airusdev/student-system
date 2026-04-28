@@ -6,7 +6,35 @@
 
 char* saved_student_names[50];
 float saved_student_grades[50];
+
+char* sorted_student_names[50];
+float sorted_student_grades[50];
+
 int student_counter = 0;
+
+void sort_students() {
+    for (int i = 0; i < student_counter; i++) {
+        sorted_student_names[i] = saved_student_names[i];
+        sorted_student_grades[i] = saved_student_grades[i];
+    }
+    
+    for (int i = 0; i < student_counter; i++) {
+        for (int pointer_one = 0; pointer_one < student_counter - 1; pointer_one++) {
+            int pointer_two = pointer_one + 1;
+            
+            if (sorted_student_grades[pointer_one] < sorted_student_grades[pointer_two]) {
+                int temp_value = sorted_student_grades[pointer_two];
+                char *temp_student = sorted_student_names[pointer_two];
+                
+                sorted_student_grades[pointer_two] = sorted_student_grades[pointer_one];
+                sorted_student_names[pointer_two] = sorted_student_names[pointer_one];
+                
+                sorted_student_grades[pointer_one] = temp_value;
+                sorted_student_names[pointer_one] = temp_student;
+            }
+        }
+    }
+}
 
 void add_student(const char* student, const char* grade) {
 	if (student == NULL || grade == NULL) return;
@@ -131,13 +159,15 @@ int main() {
 
 		} else if (choice[0] == '3') {
             if (student_counter == 0) {
-                printf("The student list is empty!");
+                printf("The student list is empty!\n");
                 continue;
             } else {
                 printf("\n--- Student List ---\n");
-
+                
+                sort_students();
+                
                 for (int i = 0; i < student_counter; i++) {
-                    printf("%d. %s - %.1f\n", i + 1, saved_student_names[i], saved_student_grades[i]);
+                    printf("%d. %s - %.1f\n", i + 1, sorted_student_names[i], sorted_student_grades[i]);
                 }
 
                 printf("--------------------\n");
