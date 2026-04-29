@@ -212,6 +212,74 @@ char* get_permission_flags(int num) {
     return output;
 }
 
+void tokenize(const char* input) {
+    char *temp_word = malloc(10 * sizeof(char));
+    int temp_counter = 0;
+    
+    for (int i = 0; i < strlen(input); i++) {
+        if (input[i] == ' ') {
+            temp_word[temp_counter] = '\0'; 
+            printf("%s | ", temp_word);
+            temp_counter = 0;
+        } else {
+            temp_word[temp_counter] = input[i];
+            temp_counter =  temp_counter + 1;
+        }
+    }
+    temp_word[temp_counter] = '\0';
+    printf("%s\n", temp_word);
+    free(temp_word);
+}
+
+int count_words(const char* input) {
+    int word_count = 0;
+    for (int i = 0; i < strlen(input); i++) {
+        if (input[i] == ' ') {
+            word_count = word_count + 1;
+        }     
+    }
+    word_count = word_count + 1;
+    
+    return word_count;
+}
+
+void split_name(const char* input) {
+    char* first_name = malloc(10 * sizeof(char));
+    int temp_count1 = 0;
+    
+    char* last_name = malloc(10 * sizeof(char));
+    int space_index;
+    int temp_count2 = 0;
+    
+    for (int i = 0; input[i] != ' '; i++) {
+        first_name[temp_count1] = input[i];
+        temp_count1 = temp_count1 + 1;
+    }
+    first_name[temp_count1] = '\0';
+    
+    // acquire space index
+    for (int i = strlen(input) - 1; input[i] != ' '; i--) {
+        if (i == 0) {
+            space_index = i;
+            printf("No last name!");
+        } else {
+            space_index = i;
+        }
+    }
+    
+    for (space_index; space_index != ' '; space_index++) {
+        last_name[temp_count2] = input[space_index]; 
+        temp_count2 = temp_count2 + 1;
+    }
+    last_name[temp_count2] = '\0';
+    
+    printf("%s", first_name);
+    printf("\n");
+    printf("%s", last_name);
+    
+    free(first_name); free(last_name);
+}
+
 
 int main() {
     char str_to_be_given[100];
