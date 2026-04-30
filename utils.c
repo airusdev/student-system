@@ -280,6 +280,40 @@ void split_name(const char* input) {
     free(first_name); free(last_name);
 }
 
+char* print_histogram(const int freq) {
+    char* histogram = malloc(freq * sizeof(char) + 1);
+    int i;
+    
+    for (i = 0; i < freq; i++) {
+        histogram[i] = '#';
+    }
+    histogram[freq] = '\0';
+    
+    return histogram;
+}
+
+void char_frequency(const char* input) {
+    int alphabet_arr[26] = {0};
+    int i; char* histogram;
+    
+    for (i = 0; input[i] != '\0'; i++) {
+        char lower = tolower(input[i]);
+        alphabet_arr[lower - 'a'] = alphabet_arr[lower - 'a'] + 1;
+    }
+    
+    for (i = 0; input[i] != '\0'; i++) {
+        if (input[i] == ' ') continue;
+        
+        int letter_index = input[i] - 'a';
+        if (alphabet_arr[letter_index] > 0) {
+            histogram = print_histogram(alphabet_arr[letter_index]);
+            printf("%c: %d  |%s\n", input[i], alphabet_arr[letter_index], histogram);
+            free(histogram);
+            alphabet_arr[letter_index] = 0;
+        }
+    }
+}
+
 
 int main() {
     char str_to_be_given[100];
