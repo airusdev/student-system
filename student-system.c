@@ -18,7 +18,7 @@ void sort_students() {
         sorted_student_grades[i] = saved_student_grades[i];
     }
     
-    for (int i = 0; i < student_counter; i++) {
+    for (int i = 0; i < student_counter; i++) { // bubble sort using grades
         for (int pointer_one = 0; pointer_one < student_counter - 1; pointer_one++) {
             int pointer_two = pointer_one + 1;
             
