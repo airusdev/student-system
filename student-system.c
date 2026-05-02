@@ -4,13 +4,14 @@
 #include <stdbool.h>
 #include <ctype.h>
 
-char* saved_student_names[50];
-float saved_student_grades[50];
-
-char* sorted_student_names[50];
-float sorted_student_grades[50];
-
 int student_counter = 0;
+int capacity = 5;
+
+char** saved_student_names;
+float* saved_student_grades;
+
+char** sorted_student_names;
+float* sorted_student_grades;
 
 void sort_students() {
     for (int i = 0; i < student_counter; i++) {
@@ -38,6 +39,17 @@ void sort_students() {
 
 void add_student(const char* student, const char* grade) {
 	if (student == NULL || grade == NULL) return;
+    if (student_counter == capacity) {
+        capacity *= 2;
+
+        saved_student_names = realloc(saved_student_names, capacity * sizeof(char*));
+        saved_student_grades = realloc(saved_student_grades, capacity * sizeof(float));
+
+        sorted_student_names = realloc(sorted_student_names, capacity * sizeof(char*));
+        sorted_student_grades = realloc(sorted_student_grades, capacity * sizeof(float));
+    }
+
+
 	char* saved_name; // the system saves only one name for now
     float saved_grade;    
 
@@ -58,6 +70,12 @@ void print_student(int index) {
 
 
 int main() {
+    saved_student_names = realloc(saved_student_names, capacity * sizeof(char*));
+    saved_student_grades = realloc(saved_student_grades, capacity * sizeof(float));
+
+    sorted_student_names = realloc(sorted_student_names, capacity * sizeof(char*));
+    sorted_student_grades = realloc(sorted_student_grades, capacity * sizeof(float));
+
 	bool accepted_value = false;
     char choice[64] = {0};
     int valid_answers[] = {'1', '2', '3', '4'}; // TO FIX! INSTEAD OF USING ARRAY, JUST DO IF STATEMENT CONDITION
