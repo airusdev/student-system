@@ -8,73 +8,71 @@ int student_counter = 0;
 int capacity = 5;
 
 char** saved_student_names;
-float* saved_student_grades;
+float* saved_student_gpas;
 
 char** sorted_student_names;
-float* sorted_student_grades;
+float* sorted_student_gpas;
 
 void sort_students() {
     for (int i = 0; i < student_counter; i++) {
         sorted_student_names[i] = saved_student_names[i];
-        sorted_student_grades[i] = saved_student_grades[i];
+        sorted_student_gpas[i] = saved_student_gpas[i];
     }
     
     for (int i = 0; i < student_counter; i++) { // bubble sort using grades
         for (int pointer_one = 0; pointer_one < student_counter - 1; pointer_one++) {
             int pointer_two = pointer_one + 1;
             
-            if (sorted_student_grades[pointer_one] < sorted_student_grades[pointer_two]) {
-                int temp_value = sorted_student_grades[pointer_two];
+            if (sorted_student_gpas[pointer_one] < sorted_student_gpas[pointer_two]) {
+                int temp_value = sorted_student_gpas[pointer_two];
                 char *temp_student = sorted_student_names[pointer_two];
                 
-                sorted_student_grades[pointer_two] = sorted_student_grades[pointer_one];
+                sorted_student_gpas[pointer_two] = sorted_student_gpas[pointer_one];
                 sorted_student_names[pointer_two] = sorted_student_names[pointer_one];
                 
-                sorted_student_grades[pointer_one] = temp_value;
+                sorted_student_gpas[pointer_one] = temp_value;
                 sorted_student_names[pointer_one] = temp_student;
             }
         }
     }
 }
 
-void add_student(const char* student, const char* grade) {
-	if (student == NULL || grade == NULL) return;
+void add_student(const char* student, const float gpa) {
+	if (student == NULL) return;
     if (student_counter == capacity) {
         capacity *= 2;
 
         saved_student_names = realloc(saved_student_names, capacity * sizeof(char*));
-        saved_student_grades = realloc(saved_student_grades, capacity * sizeof(float));
+        saved_student_gpas = realloc(saved_student_gpas, capacity * sizeof(float));
 
         sorted_student_names = realloc(sorted_student_names, capacity * sizeof(char*));
-        sorted_student_grades = realloc(sorted_student_grades, capacity * sizeof(float));
+        sorted_student_gpas = realloc(sorted_student_gpas, capacity * sizeof(float));
     }
 
 
 	char* saved_name; // the system saves only one name for now
-    float saved_grade;    
 
-    saved_grade = atof(grade);
 	saved_name = malloc(strlen(student) + 1);
 	strcpy(saved_name, student);
 
-    saved_student_grades[student_counter] = saved_grade;
+    saved_student_gpas[student_counter] = gpa;
     saved_student_names[student_counter] = saved_name;
-    printf("Student saved successfully: %s %.1f\n\n", saved_student_names[student_counter], saved_student_grades[student_counter]);
+    printf("Student saved successfully: %s %.1f\n\n", saved_student_names[student_counter], saved_student_gpas[student_counter]);
 
     student_counter = student_counter + 1;
 }
 
 void print_student(int index) {
-    printf("%d. %s - %.1f\n\n", index + 1, saved_student_names[index], saved_student_grades[index]);
+    printf("%d. %s - %.1f\n\n", index + 1, saved_student_names[index], saved_student_gpas[index]);
 }
 
 
 int main() {
     saved_student_names = realloc(saved_student_names, capacity * sizeof(char*));
-    saved_student_grades = realloc(saved_student_grades, capacity * sizeof(float));
+    saved_student_gpas = realloc(saved_student_gpas, capacity * sizeof(float));
 
     sorted_student_names = realloc(sorted_student_names, capacity * sizeof(char*));
-    sorted_student_grades = realloc(sorted_student_grades, capacity * sizeof(float));
+    sorted_student_gpas = realloc(sorted_student_gpas, capacity * sizeof(float));
 
 	bool accepted_value = false;
     char choice[64] = {0};
@@ -112,7 +110,9 @@ int main() {
             }
 
             char name[100];
-            char grade[100];
+            float* grades = malloc(3 * sizeof(float));
+            float gpa = 0;
+            int valid = 1;
 
             printf("Enter student name: \n");
             fgets(name, 100, stdin);
@@ -135,28 +135,52 @@ int main() {
                 continue;
             }
 
-            printf("Enter student's grade: \n");
-            fgets(grade, 100, stdin);
-            grade[strcspn(grade, "\n")] = '\0';
+            for (int i = 0; i < 3; i++) { // parse the char grade here to float
+                char grade[100];
+                int grade_is_spaces = 1;
 
-            // empty?
-            if (strlen(grade) == 0) {
-                printf("The system doesn't accept an empty input");
-                break;
+                printf("Enter student's grade: \n");
+                fgets(grade, 100, stdin);
+                grade[strcspn(grade, "\n")] = '\0';
+
+                if (strlen(grade) == 0) {
+                    printf("The system doesn't accept an empty input.");
+                    int valid = 0;
+                    break;
+                }
+
+                for (int i = 0; grade[i] != '\0'; i++) {
+                    if (!isspace(grade[i])) {
+                        grade_is_spaces = 0;
+                    }
+                }
+
+                if (grade_is_spaces == true) {
+                    printf("The system doesn't accept an input of all spaces\n\n");
+                    int valid = 0;
+                    break;
+                }
+
+                float saved_grade = atof(grade);
+
+                if (saved_grade < 60 || saved_grade > 100) { // TO ADD: a way to reset the student counter for Choice 3: view all student
+                    printf("\nThe grade must be within 60 and 100 only.\n\n");
+                    valid = 0;
+                    break;
+                } else {
+                    grades[i] = saved_grade;
+                    gpa += saved_grade;
+                }
             }
-
-            // all spaces ? 
-            int grade_is_spaces = 1;
-            for (int i = 0; grade[i] != '\0'; i++) {
-                if (!isspace(name[i])) grade_is_spaces = 0;
+            if (gpa >= 180 && gpa <= 300) gpa /= 3.0;
+            
+            if (valid == true) {
+                add_student(name, gpa); // we should use pointer to grades
             }
-
-            if (grade_is_spaces == true) {
-                printf("The system doesn's accept an input of all spaces\n\n");
-                break;
+            else {
+                printf("Input wasn't valid.\n\n");
+                continue;
             }
-
-			add_student(name, grade);
 
 		} else if (choice[0] == '2') {
             if (student_counter == 0) {
@@ -185,7 +209,7 @@ int main() {
                 sort_students();
                 
                 for (int i = 0; i < student_counter; i++) {
-                    printf("%d. %s - %.1f\n", i + 1, sorted_student_names[i], sorted_student_grades[i]);
+                    printf("%d. %s - GPA: %.1f\n", i + 1, sorted_student_names[i], sorted_student_gpas[i]);
                 }
 
                 printf("--------------------\n");
