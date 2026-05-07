@@ -1,40 +1,17 @@
 #include <stdio.h>
-#include <stdlib.h>
-#define MAX_HEIGHT 41
 
-struct box
-{
-    int length;
-    int width;
-    int height;
-};
+char names[3][50] = {"Alice", "Bob", "Charlie"};
+int ages[3] = {20, 25, 30};
+float scores[3] = {88.5, 92.0, 75.5};
 
-typedef struct box box;
-
-int get_volume(box b) {
-    return b.length * b.width * b.height;
+void print_person(int index) {
+    printf("Name: %s | Age: %d | Score: %.1f\n", 
+           names[index], ages[index], scores[index]);
 }
 
-int is_lower_than_max_height(box b) {
-	if (b.height < MAX_HEIGHT) {
-        return 1;
-    } else {
-        return 0;
+int main() {
+    for (int i = 0; i < 3; i++) {
+        print_person(i);
     }
-}
-
-int main()
-{
-	int n;
-	scanf("%d", &n);
-	box *boxes = malloc(n * sizeof(box));
-	for (int i = 0; i < n; i++) {
-		scanf("%d%d%d", &boxes[i].length, &boxes[i].width, &boxes[i].height);
-	}
-	for (int i = 0; i < n; i++) {
-		if (is_lower_than_max_height(boxes[i])) {
-			printf("%d\n", get_volume(boxes[i]));
-		}
-	}
-	return 0;
+    return 0;
 }

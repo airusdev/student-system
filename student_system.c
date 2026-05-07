@@ -7,31 +7,39 @@
 int student_counter = 0;
 int capacity = 5;
 
-char** saved_student_names;
-float* saved_student_gpas;
+struct students {
+    char* name;
+    float gpa;
+};
 
-char** sorted_student_names;
-float* sorted_student_gpas;
+struct students* saved;
+struct students* sorted;
+
+// char** saved_student_names;
+// float* saved_student_gpas;
+
+// char** sorted_student_names;
+// float* sorted_student_gpas;
 
 void sort_students() {
     for (int i = 0; i < student_counter; i++) {
-        sorted_student_names[i] = saved_student_names[i];
-        sorted_student_gpas[i] = saved_student_gpas[i];
+        sorted[i].name = saved[i].name;
+        sorted[i].gpa = saved[i].gpa;
     }
     
     for (int i = 0; i < student_counter; i++) { // bubble sort using grades
         for (int pointer_one = 0; pointer_one < student_counter - 1; pointer_one++) {
             int pointer_two = pointer_one + 1;
             
-            if (sorted_student_gpas[pointer_one] < sorted_student_gpas[pointer_two]) {
-                int temp_value = sorted_student_gpas[pointer_two];
-                char *temp_student = sorted_student_names[pointer_two];
+            if (sorted[pointer_one].gpa < sorted[pointer_two].gpa) {
+                int temp_value = sorted[pointer_two].gpa;
+                char *temp_student = sorted[pointer_two].name;
                 
-                sorted_student_gpas[pointer_two] = sorted_student_gpas[pointer_one];
-                sorted_student_names[pointer_two] = sorted_student_names[pointer_one];
+                sorted[pointer_two].gpa = sorted[pointer_one].gpa;
+                sorted[pointer_two].name = sorted[pointer_one].name;
                 
-                sorted_student_gpas[pointer_one] = temp_value;
-                sorted_student_names[pointer_one] = temp_student;
+                sorted[pointer_one].gpa = temp_value;
+                sorted[pointer_one].name = temp_student;
             }
         }
     }
@@ -42,11 +50,8 @@ void add_student(const char* student, const float gpa) {
     if (student_counter == capacity) {
         capacity *= 2;
 
-        saved_student_names = realloc(saved_student_names, capacity * sizeof(char*));
-        saved_student_gpas = realloc(saved_student_gpas, capacity * sizeof(float));
-
-        sorted_student_names = realloc(sorted_student_names, capacity * sizeof(char*));
-        sorted_student_gpas = realloc(sorted_student_gpas, capacity * sizeof(float));
+        saved = realloc(saved, capacity * sizeof(struct students));
+        sorted = realloc(sorted, capacity * sizeof(struct students));
     }
 
 
@@ -55,24 +60,21 @@ void add_student(const char* student, const float gpa) {
 	saved_name = malloc(strlen(student) + 1);
 	strcpy(saved_name, student);
 
-    saved_student_gpas[student_counter] = gpa;
-    saved_student_names[student_counter] = saved_name;
-    printf("Student saved successfully: %s %.1f\n\n", saved_student_names[student_counter], saved_student_gpas[student_counter]);
+    saved[student_counter].gpa = gpa;
+    saved[student_counter].name = saved_name;
+    printf("Student saved successfully: %s %.1f\n\n", saved[student_counter].name, saved[student_counter].gpa);
 
     student_counter = student_counter + 1;
 }
 
 void print_student(int index) {
-    printf("%d. %s - %.1f\n\n", index + 1, saved_student_names[index], saved_student_gpas[index]);
+    printf("%d. %s - %.1f\n\n", index + 1, saved[index].name, saved[index].gpa);
 }
 
 
 int main() {
-    saved_student_names = realloc(saved_student_names, capacity * sizeof(char*));
-    saved_student_gpas = realloc(saved_student_gpas, capacity * sizeof(float));
-
-    sorted_student_names = realloc(sorted_student_names, capacity * sizeof(char*));
-    sorted_student_gpas = realloc(sorted_student_gpas, capacity * sizeof(float));
+    saved = realloc(saved, capacity * sizeof(struct students));
+    sorted = realloc(sorted, capacity * sizeof(struct students));
 
 	bool accepted_value = false;
     char choice[64] = {0};
@@ -201,7 +203,7 @@ int main() {
 
 		} else if (choice[0] == '3') {
             if (student_counter == 0) {
-                printf("The student list is empty!\n");
+                printf("The student list is empty!\n\n");
                 continue;
             } else {
                 printf("\n--- Student List ---\n");
@@ -209,7 +211,7 @@ int main() {
                 sort_students();
                 
                 for (int i = 0; i < student_counter; i++) {
-                    printf("%d. %s - GPA: %.1f\n", i + 1, sorted_student_names[i], sorted_student_gpas[i]);
+                    printf("%d. %s - GPA: %.1f\n", i + 1, sorted[i].name, sorted[i].gpa);
                 }
 
                 printf("--------------------\n");
@@ -223,7 +225,8 @@ int main() {
 
     choice[0] = '\0';
     for (int i = 0; i < student_counter; i++) {
-        free(saved_student_names[i]);
+        free(saved[i].name);
+        free(sorted[i].name);
     }
 	return 0;
 }
