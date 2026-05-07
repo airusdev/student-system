@@ -15,12 +15,6 @@ struct students {
 struct students* saved;
 struct students* sorted;
 
-// char** saved_student_names;
-// float* saved_student_gpas;
-
-// char** sorted_student_names;
-// float* sorted_student_gpas;
-
 void sort_students() {
     for (int i = 0; i < student_counter; i++) {
         sorted[i].name = saved[i].name;
@@ -32,8 +26,8 @@ void sort_students() {
             int pointer_two = pointer_one + 1;
             
             if (sorted[pointer_one].gpa < sorted[pointer_two].gpa) {
-                int temp_value = sorted[pointer_two].gpa;
-                char *temp_student = sorted[pointer_two].name;
+                float temp_value = sorted[pointer_two].gpa;
+                char* temp_student = sorted[pointer_two].name;
                 
                 sorted[pointer_two].gpa = sorted[pointer_one].gpa;
                 sorted[pointer_two].name = sorted[pointer_one].name;
@@ -73,13 +67,12 @@ void print_student(int index) {
 
 
 int main() {
-    saved = realloc(saved, capacity * sizeof(struct students));
-    sorted = realloc(sorted, capacity * sizeof(struct students));
+    saved = malloc(capacity * sizeof(struct students));
+    sorted = malloc(capacity * sizeof(struct students));
 
 	bool accepted_value = false;
     char choice[64] = {0};
     int valid_answers[] = {'1', '2', '3', '4'}; // TO FIX! INSTEAD OF USING ARRAY, JUST DO IF STATEMENT CONDITION
-	//int choice = 0;
 
 	while (1) {
         accepted_value = false; // wait until valid choice
@@ -106,11 +99,6 @@ int main() {
         }
 
 		if (choice[0] == '1') {
-            if (student_counter == 50) {
-                printf("Slots are full!\n");
-                continue;
-            }
-
             char name[100];
             float* grades = malloc(3 * sizeof(float));
             float gpa = 0;
@@ -165,7 +153,7 @@ int main() {
 
                 float saved_grade = atof(grade);
 
-                if (saved_grade < 60 || saved_grade > 100) { // TO ADD: a way to reset the student counter for Choice 3: view all student
+                if (saved_grade < 60 || saved_grade > 100) {
                     printf("\nThe grade must be within 60 and 100 only.\n\n");
                     valid = 0;
                     break;
@@ -226,7 +214,6 @@ int main() {
     choice[0] = '\0';
     for (int i = 0; i < student_counter; i++) {
         free(saved[i].name);
-        free(sorted[i].name);
     }
 	return 0;
 }
