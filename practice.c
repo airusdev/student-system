@@ -1,37 +1,54 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 
-struct students {
-    char* name;
-    int age;
-    float score;
+struct triangle
+{
+	int a;
+	int b;
+	int c;
 };
 
-// char names[3][50] = {"Alice", "Bob", "Charlie"};
-// int ages[3] = {20, 25, 30};
-// float scores[3] = {88.5, 92.0, 75.5};
+typedef struct triangle triangle;
+int compare_by_area (const void* a, const void* b) {
+    const triangle* ia = (const struct triangle *)a;
+    const triangle* ib = (const struct triangle *)b;
 
-void print_person(int index, students student) {
-    printf("Name: %s | Age: %d | Score: %.1f\n", 
-           students[index], students[index], students[index]);
+    // compute area
+    double p_1 = (ia->a + ia->b + ia->c) / 2.0;
+    double p_2 = (ib->a + ib->b + ib->c) / 2.0;
+
+    double p1_a = p_1 - ia->a;
+    double p1_b = p_1 - ia->b;
+    double p1_c = p_1 - ia->c; 
+
+    double p2_a = p_2 - ib->a;
+    double p2_b = p_2 - ib->b;
+    double p2_c = p_2 - ib->c;
+
+    double t1_area = sqrt(p_1 * p1_a * p1_b * p1_c);
+    double t2_area = sqrt(p_2 * p2_a * p2_b * p2_c);
+
+    if (t1_area < t2_area) return -1;
+    if (t1_area > t2_area) return 1;
+    return 0;
 }
 
-int main() {
-    struct students student[3];
+void sort_by_area(triangle* tr, int n) {
+    qsort(tr, n, sizeof(triangle), compare_by_area);
+}
 
-    student[0].name = "Alice";
-    student[0].age = 20;
-    student[0].score = 88.5;
-
-    student[1].name = "Bob";
-    student[1].age = 25;
-    student[1].score = 92.0;
-
-    student[2].name = "Charlie";
-    student[2].age = 30;
-    student[2].score = 75.5;
-
-    for (int i = 0; i < 3; i++) {
-        print_person(i, struct students);
-    }
-    return 0;
+int main()
+{
+	int n;
+	scanf("%d", &n);
+	triangle *tr = malloc(n * sizeof(triangle));
+	for (int i = 0; i < n; i++) {
+		scanf("%d%d%d", &tr[i].a, &tr[i].b, &tr[i].c);
+	}
+	sort_by_area(tr, n);
+	for (int i = 0; i < n; i++) {
+		printf("%d %d %d\n", tr[i].a, tr[i].b, tr[i].c);
+	}
+	return 0;
 }
