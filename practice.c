@@ -1,54 +1,46 @@
-#include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
+#include <string.h>
+#include <stdio.h>
 
-struct triangle
-{
-	int a;
-	int b;
-	int c;
-};
+int comparator_function(int arr[], int count, )
 
-typedef struct triangle triangle;
-int compare_by_area (const void* a, const void* b) {
-    const triangle* ia = (const struct triangle *)a;
-    const triangle* ib = (const struct triangle *)b;
+int partition(int arr[], int low, int high) {
+    int pivot = arr[high];
+    int swap_marker = low - 1;
+    int temp = 0;
 
-    // compute area
-    double p_1 = (ia->a + ia->b + ia->c) / 2.0;
-    double p_2 = (ib->a + ib->b + ib->c) / 2.0;
+    for (int index = low; index < high; index++) {
+        if (arr[index] <= pivot) {
+            swap_marker++;
+            
+            temp = arr[index];
+            arr[index] = arr[swap_marker];
+            arr[swap_marker] = temp;
+        }
+    }
 
-    double p1_a = p_1 - ia->a;
-    double p1_b = p_1 - ia->b;
-    double p1_c = p_1 - ia->c; 
+    temp = arr[swap_marker + 1];
+    arr[swap_marker + 1] = arr[high];
+    arr[high] = temp;
 
-    double p2_a = p_2 - ib->a;
-    double p2_b = p_2 - ib->b;
-    double p2_c = p_2 - ib->c;
+    return swap_marker + 1;
+}
 
-    double t1_area = sqrt(p_1 * p1_a * p1_b * p1_c);
-    double t2_area = sqrt(p_2 * p2_a * p2_b * p2_c);
+void quicksort(int arr[], int low, int high) {
+    if (low < high) {
+        int pi = partition(arr, low, high);
+        quicksort(arr, low, pi - 1);
+        quicksort(arr, pi + 1, high);
+    }
+}
 
-    if (t1_area < t2_area) return -1;
-    if (t1_area > t2_area) return 1;
+int main() {
+    int num[] = {1, 4, 3, 2};
+    quicksort(&num[0], 0, 3);
+
+    for (int i = 0; i < 4; i++) {
+        printf("%d ", num[i]);
+    }
+
     return 0;
-}
-
-void sort_by_area(triangle* tr, int n) {
-    qsort(tr, n, sizeof(triangle), compare_by_area);
-}
-
-int main()
-{
-	int n;
-	scanf("%d", &n);
-	triangle *tr = malloc(n * sizeof(triangle));
-	for (int i = 0; i < n; i++) {
-		scanf("%d%d%d", &tr[i].a, &tr[i].b, &tr[i].c);
-	}
-	sort_by_area(tr, n);
-	for (int i = 0; i < n; i++) {
-		printf("%d %d %d\n", tr[i].a, tr[i].b, tr[i].c);
-	}
-	return 0;
 }
