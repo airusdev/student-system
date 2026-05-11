@@ -198,11 +198,12 @@ char* get_permission_flags(int num) {
 
     for (int i = 0; i < 3; i++) {
         int reverse_index = 2 - i;
-        int desired_value = binary_num & 1;
-        binary_num = binary_num >> 1;
+        int desired_value = binary_num & 1; // acquire the rightmost bit
+        binary_num = binary_num >> 1; // shift by one to the right
         
         if (desired_value == 1) {
-            output[reverse_index] = valid_output[i];
+            output[reverse_index] = valid_output[i]; // start from index 2 to 0 putting x first
+            // actual: r w x, we reversed it
         }
         else {
             output[reverse_index] = '-';
@@ -251,13 +252,14 @@ void split_name(const char* input) {
     int space_index;
     int temp_count2 = 0;
     
+    // create first name
     for (int i = 0; input[i] != ' '; i++) {
         first_name[temp_count1] = input[i];
         temp_count1 = temp_count1 + 1;
     }
     first_name[temp_count1] = '\0';
     
-    // acquire space index
+    // acquire space index for last name
     for (int i = strlen(input) - 1; input[i] != ' '; i--) {
         if (i == 0) {
             space_index = i;
@@ -266,7 +268,8 @@ void split_name(const char* input) {
             space_index = i;
         }
     }
-    
+
+    // create last name
     for (space_index; space_index != ' '; space_index++) {
         last_name[temp_count2] = input[space_index]; 
         temp_count2 = temp_count2 + 1;
@@ -327,6 +330,24 @@ int factorial(int n) {
 int power(int base, int exp) {
     if (exp == 0) return 1;
     return base * power(base, exp - 1);
+}
+
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}
+
+int string_compare(char* string_one, char* string_two) {
+    int length = max(strlen(string_one), strlen(string_two));
+
+    for (int i = 0; i < length; i++) {
+        char string_one_char = string_one[i];
+        char string_two_char = string_two[i];
+
+        if (string_one_char < string_two_char) return -1;
+        if (string_one_char> string_two_char) return 1; 
+    }
+    
+    return 0;
 }
 
 
