@@ -336,7 +336,7 @@ int max(int a, int b) {
     return (a > b) ? a : b;
 }
 
-int string_compare(char* string_one, char* string_two) {
+int string_compare(const char* string_one, const char* string_two) {
     int length = max(strlen(string_one), strlen(string_two));
 
     for (int i = 0; i < length; i++) {
@@ -348,6 +348,39 @@ int string_compare(char* string_one, char* string_two) {
     }
     
     return 0;
+}
+
+int partition(char* arr[], int low, int high, int (*cmp)(const char*, const char*)) {
+    int swap_marker = low - 1;
+    char* pivot = arr[high];
+    char* temp;
+
+    for (int i = low; i < high; i++) {
+        if (cmp(arr[i], pivot) <= 0) {
+            swap_marker++;
+            temp = arr[i];
+            arr[i] = arr[swap_marker];
+            arr[swap_marker] = temp;
+        }
+    }
+
+    temp = arr[swap_marker + 1];
+    arr[swap_marker + 1] = arr[high];
+    arr[high] = temp;
+
+    return swap_marker + 1;
+}
+
+void quicksort(char* arr[], int low, int high, int (*cmp)(const char*, const char*)) {
+    if (low < high) {
+        int p = partition(arr, low, high, cmp);
+        quicksort(arr, low, p - 1, cmp);
+        quicksort(arr, p + 1, high, cmp);
+    }
+}
+
+void sort_names(char* arr[], int count, int (*cmp)(const char*, const char*)) {
+    quicksort(arr, 0, count, cmp);
 }
 
 
