@@ -380,7 +380,19 @@ void quicksort(char* arr[], int low, int high, int (*cmp)(const char*, const cha
 }
 
 void sort_names(char* arr[], int count, int (*cmp)(const char*, const char*)) {
-    quicksort(arr, 0, count, cmp);
+    quicksort(arr, 0, count - 1, cmp);
+}
+
+int custom_partition(void* arr[], void* low, void* high, size_t element_size, int (*cmp)(const char*, const char*)) {
+
+    void* ptr_to_low = &low;
+
+}
+
+
+void custom_qsort(void* arr[], int count, size_t element_size, int (*cmp)(const char*, const char*)) {
+    void* p = custom_partition(arr, arr, element_size, cmp);
+    //                              ^ di pa sure kung ito yung tamang ilalagay sa low
 }
 
 
