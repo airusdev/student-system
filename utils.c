@@ -383,16 +383,58 @@ void sort_names(char* arr[], int count, int (*cmp)(const char*, const char*)) {
     quicksort(arr, 0, count - 1, cmp);
 }
 
-int custom_partition(void* arr[], void* low, void* high, size_t element_size, int (*cmp)(const char*, const char*)) {
+int integer_comparator(const void* a, const void* b) {
+    const int pa = *(const int *)a;
+    const int pb = *(const int *)b;
 
-    void* ptr_to_low = &low;
-
+    if (pa < pb) return -1;
+    if (pa > pb) return 1;
+    return 0;
 }
 
+int custom_partition(void* base, int low, int high, size_t element_size, int (*cmp)(const void*, const void*)) {
+    unsigned char* byte_base = (unsigned char *)base;    
+    unsigned char* pivot = byte_base + (high * element_size);
+    unsigned char* swap_marker_address;
+    unsigned char temp[element_size];
 
-void custom_qsort(void* arr[], int count, size_t element_size, int (*cmp)(const char*, const char*)) {
-    void* p = custom_partition(arr, arr, element_size, cmp);
-    //                              ^ di pa sure kung ito yung tamang ilalagay sa low
+    int swap_marker = low - 1;
+
+    for (int i = low; i < high; i++) {
+        unsigned char* current = byte_base + (i * element_size);
+
+        if (cmp(current, pivot) <= 0) {
+            swap_marker++;
+
+            swap_marker_address = byte_base + (swap_marker * element_size);
+            memcpy(temp, swap_marker_address, element_size);
+            memcpy(swap_marker_address, current, element_size);
+            memcpy(current, temp, element_size);
+        }
+    }
+
+    swap_marker_address = byte_base + ((swap_marker + 1) * element_size);
+
+    memcpy(temp, swap_marker_address, element_size);
+    memcpy(swap_marker_address, pivot, element_size);
+    memcpy(pivot, temp, element_size);
+
+    return swap_marker + 1;
+}
+
+void custom_recurse(void* base, int low, int high, size_t element_size, int (*cmp)(const void*, const void*)) {
+    if (low < high) {
+        int p = custom_partition(base, low, high, element_size, cmp);
+        custom_recurse(base, low, p - 1, element_size, cmp);
+        custom_recurse(base, p + 1, high, element_size, cmp);
+    }
+}
+
+void custom_qsort(void* arr, int count, size_t element_size, int (*cmp)(const void*, const void*)) {
+    int low = 0;
+    int high = count - 1;
+
+    custom_recurse(arr, low, high, element_size, cmp);
 }
 
 
