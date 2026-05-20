@@ -1,8 +1,10 @@
 #include <stdio.h>
+// #include "utils.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <ctype.h>
+
 
 int student_counter = 0;
 int capacity = 5;
@@ -49,7 +51,7 @@ void add_student(const char* student, const float gpa) {
     saved[student_counter].name = saved_name;
     printf("Student saved successfully: %s %.1f\n\n", saved[student_counter].name, saved[student_counter].gpa);
 
-    // use the add_student function to also add the names to the sorted. this will be sorted later when option 3 is called
+    // add the names to the sorted also. this will be sorted later when option 3 is called
     sorted[student_counter].gpa = saved[student_counter].gpa;
     sorted[student_counter].name = saved[student_counter].name;
 
