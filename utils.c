@@ -439,18 +439,8 @@ void custom_qsort(void* arr, int count, size_t element_size, int (*cmp)(const vo
     custom_recurse(arr, low, high, element_size, cmp);
 }
 
-void custom_dynamic_array(void* base, int count, int capacity, size_t element_size) { // to add/code
-    // code here
-}
-
-void permute(int current_index, ) { // dont know its type yet --- must be recursive
-    return;
-}
-
 int anagram(char* string_one, char* string_two) {
-    // if input is not the same length, cant be an anagram
     if (strlen(string_one) != strlen(string_two)) return 0;
-
     int my_letters[26] = {0};
 
     for (int i = 0; string_one[i] != '\0'; i++) {
@@ -461,7 +451,6 @@ int anagram(char* string_one, char* string_two) {
     for (int i = 0; string_two[i] != '\0'; i++) {
         char lower_letter = tolower(string_two[i]);
         int current = my_letters[lower_letter - 'a'];
-
 
         if (my_letters[lower_letter - 'a'] > 0) {
             my_letters[lower_letter - 'a']--;
@@ -474,143 +463,43 @@ int anagram(char* string_one, char* string_two) {
     return 1;
 }
 
-/* ---------- test runner ---------- */
-static int passed = 0, failed = 0;
+int main() {
+    char str_to_be_given[100];
+    float first_num;
+    float second_num;
 
-#define TEST(description, str1, str2, expected)                                 \
-    do {                                                                         \
-        char* s1 = str1;                                                         \
-        char* s2 = str2;                                                         \
-                                                                                 \
-        printf("  %-48s [", description);                                        \
-        for (int _bar = 0; _bar < 10; _bar++) {                                  \
-            printf("=");                                                         \
-            fflush(stdout);                                                      \
-            usleep(40000);                                                       \
-        }                                                                        \
-        printf("] ");                                                            \
-                                                                                 \
-        int result = anagram(s1, s2);                                            \
-                                                                                 \
-        if (result == (expected)) {                                              \
-            printf("\033[1;32mPASS\033[0m\n");                                   \
-            passed++;                                                            \
-        } else {                                                                 \
-            printf("\033[1;31mFAIL\033[0m\n");                                   \
-            printf("    +-- Inputs:\n");                                         \
-            printf("    |   string_one : \"%s\"\n", s1);                         \
-            printf("    |   string_two : \"%s\"\n", s2);                         \
-            printf("    +-- Expected  : %d\n", expected);                        \
-            printf("    +-- Got       : \033[1;31m%d\033[0m\n", result);         \
-            printf("\n");                                                        \
-            failed++;                                                            \
-        }                                                                        \
-    } while (0)
+    printf("Please give me a sentence to work with:\n");
+    scanf("%[^\n]%*c", &str_to_be_given);
 
-static void final_report(void) {
-    printf("\n============================\n");
-    printf("  \033[1;32mPassed: %d\033[0m   \033[1;31mFailed: %d\033[0m\n",
-           passed, failed);
-    if (failed == 0) {
-        printf("\n  \033[1;32m*** Congratulations! You passed all the test cases! ***\033[0m\n");
-    } else {
-        printf("\n  \033[1;31mSome tests failed. Keep debugging!\033[0m\n");
-    }
-}
-/* ------------------------------- */
+    printf("Total char count / str length: %d\n", str_length(str_to_be_given));
 
-int main(void) {
-    printf("Running anagram test suite (blind mode)...\n\n");
+    char* upper = to_upper(str_to_be_given);
+    char* lower = to_lower(str_to_be_given);
+    char* titlecase = title_case(str_to_be_given);
 
-    /* ========== TRUE CASES ========== */
-    printf("\033[1;36m+-- TRUE CASES  (expected: 1)\033[0m\n");
-    printf("\033[1;36m|   These should be valid anagrams\033[0m\n");
-    printf("\033[1;36m+-------------------------------\033[0m\n\n");
-
-    TEST("True Case 1",  "abc",    "abc",    1);
-    TEST("True Case 2",  "listen", "silent", 1);
-    TEST("True Case 3",  "aabb",   "abab",   1);
-    TEST("True Case 4",  "",       "",       1);
-    TEST("True Case 5",  "a",      "a",      1);
-    TEST("True Case 6",  "Listen", "Silent", 1);
-    // Edge case that is actually an anagram (case-insensitive)
-    TEST("True Case 7",  "abcdefghijklmnopqrstuvwxyz",
-                         "abcdefghijklmnopqrstuvwxyZ", 1);
-
-    /* ========== FALSE CASES ========== */
-    printf("\n\033[1;35m+-- FALSE CASES (expected: 0)\033[0m\n");
-    printf("\033[1;35m|   These should NOT be valid anagrams\033[0m\n");
-    printf("\033[1;35m+-----------------------------------\033[0m\n\n");
-
-    TEST("False Case 1", "abc",    "ab",     0);
-    TEST("False Case 2", "abc",    "abd",    0);
-    TEST("False Case 3", "aab",    "abb",    0);
-    TEST("False Case 4", "",       "a",      0);
-    TEST("False Case 5", "a",      "",       0);
-    TEST("False Case 6", "a b",    "ab",     0);
-
-    /* ========== EDGE CASES ========== */
-    printf("\n\033[1;33m+-- EDGE CASES\033[0m\n");
-    printf("\033[1;33m|   Longer strings & corner cases\033[0m\n");
-    printf("\033[1;33m+-------------------------------\033[0m\n\n");
-
-    TEST("Edge Case 1", "abcdefghijklmnopqrstuvwxyz",
-                         "zyxwvutsrqponmlkjihgfedcba", 1);
-
-    // Now there is no false edge case; you can add one if needed.
-
-    /* ========== FINAL LOADING BAR & REPORT ========== */
-    printf("\n\n");
-    printf("\n\033[1;33m  Calculating final results \033[0m[");
-    fflush(stdout);
-    for (int i = 0; i < 10; i++) {
-        usleep(100000);
-        printf("=");
-        fflush(stdout);
-    }
-    printf("] \033[1;32mDone!\033[0m\n\n");
-
-    final_report();
-    return failed ? 1 : 0;
-}
-
-// int main() {
-//     char str_to_be_given[100];
-//     float first_num;
-//     float second_num;
-
-//     printf("Please give me a sentence to work with:\n");
-//     scanf("%[^\n]%*c", &str_to_be_given);
-
-//     printf("Total char count / str length: %d\n", str_length(str_to_be_given));
-
-//     char* upper = to_upper(str_to_be_given);
-//     char* lower = to_lower(str_to_be_given);
-//     char* titlecase = title_case(str_to_be_given);
-
-//     printf("Uppercase: %s\n", upper);
-//     free(upper);
+    printf("Uppercase: %s\n", upper);
+    free(upper);
     
-//     printf("Lowercase: %s\n", lower);
-//     free(lower);
+    printf("Lowercase: %s\n", lower);
+    free(lower);
 
-//     printf("Title Case: %s\n", titlecase);
-//     free(titlecase);
+    printf("Title Case: %s\n", titlecase);
+    free(titlecase);
     
-//     printf("Give me two numbers: N_1 N_2\n");
-//     scanf(" %f %f", &first_num, &second_num);
-//     printf("Sum: %.1f\n", add(first_num, second_num));
-//     printf("Difference: %.1f\n", subtract(first_num, second_num));
-//     printf("Product: %.1f\n", multiply(first_num, second_num));
+    printf("Give me two numbers: N_1 N_2\n");
+    scanf(" %f %f", &first_num, &second_num);
+    printf("Sum: %.1f\n", add(first_num, second_num));
+    printf("Difference: %.1f\n", subtract(first_num, second_num));
+    printf("Product: %.1f\n", multiply(first_num, second_num));
 
-//     int my_error;
-//     float result = safe_divide(first_num, second_num, &my_error);
+    int my_error;
+    float result = safe_divide(first_num, second_num, &my_error);
 
-//     if (my_error) {
-//         printf("Quotient: ERROR\n");
-//     } else if (!my_error) {
-//         printf("Quotient: %.1f\n", result);
-//     }
+    if (my_error) {
+        printf("Quotient: ERROR\n");
+    } else if (!my_error) {
+        printf("Quotient: %.1f\n", result);
+    }
 
-//     return 0;
-// }
+    return 0;
+}

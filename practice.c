@@ -40,10 +40,6 @@ void quicksort(int arr[], int low, int high) {
 
 
 // four string comparison functions
-// { "apple", "banana", "carrots", "dogs" }
-// { "dogs", "carrots", "apple", "banana" }
-// "apple" , "appbl"
-
 int max(int a, int b) {
     return (a > b) ? a : b;
 }
@@ -86,11 +82,6 @@ int sort_by_number_of_distinct_characters(const char* string_one, const char* st
     int alphabet_two[26] = {0};
     int i;
 
-    // how do i know if a char from any of the strigs is distinct?
-    // answer: check if alphabet_x[index of the letter] where x is either one or two is already 1
-    
-    // TO DOUBLE CHECK
-    // distinct checker for string_one
     for (i = 0; string_one[i] != '\0'; i++) {
         char my_char = string_one[i];
         int char_index = my_char - 'a';
@@ -101,7 +92,6 @@ int sort_by_number_of_distinct_characters(const char* string_one, const char* st
         }
     } 
 
-    // distinct checker for string_two
     for (i = 0; string_two[i] != '\0'; i++) {   
         char my_char = string_two[i];
         int char_index = my_char - 'a';
@@ -114,7 +104,7 @@ int sort_by_number_of_distinct_characters(const char* string_one, const char* st
     
     if (distinct_one < distinct_two) return -1;
     if (distinct_one > distinct_two) return 1;
-    
+
     return lexicographic_sort(string_one, string_two);
 }
 

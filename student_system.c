@@ -33,6 +33,22 @@ int compare_by_name(const void* a, const void* b) {
     return strcmp(ia->name, ib->name);
 }
 
+// char* partial_name_search() { // scour the student database and look for partial name match
+//     // create a new array that contains a valid partial_name
+//     // logic goes here
+//     // return the new array
+//     return;
+// }
+
+// void filter_by_gpa() { // filter by minimum gpa or maximum gpa
+//     // malloc a new array that contains the
+//     return;
+// }
+
+// void filter_by_gpa_range() { // filter by an accepted range of gpa
+//     return;
+// }
+
 void add_student(const char* student, const float gpa) {
 	if (student == NULL) return;
     if (student_counter == capacity) {
@@ -62,6 +78,32 @@ void print_student(int index) {
     printf("%d. %s - %.1f\n\n", index + 1, saved[index].name, saved[index].gpa);
 }
 
+int string_input_validation(char* input) {
+    int all_spaces = 1;
+
+    // is string empty?
+    if (strlen(input) == 0 || input[0] == '\0') {
+        printf("The system does not accept an empty string.\n\n");
+        return 0;
+    }
+
+    // check if string is all spaces
+    for (int i = 0; input[i] != '\0'; i++) {
+        if (!isspace(input[i]) || !isalpha(input[i])) {
+            all_spaces = 0;
+            break;
+        }
+    }
+
+    if (all_spaces) {
+        printf("The system does not accept an input that is only spaces.\n\n");
+        return 0;
+    }
+
+    return 1;
+}
+
+
 
 int main() {
     saved = malloc(capacity * sizeof(struct students));
@@ -72,9 +114,10 @@ int main() {
     int valid_answers[] = {'1', '2', '3', '4'}; // TO FIX! INSTEAD OF USING ARRAY, JUST DO IF STATEMENT CONDITION
 
 	while (1) {
+        // validate main menu input
         accepted_value = false; // wait until valid choice
         while (!accepted_value) {
-            printf("Options:\n (1) Add Student\n (2) View Students\n (3) View All Students\n (4) Exit\n\n");
+            printf("Options:\n (1) Add Student\n (2) View All Students\n (3) Exit\n\n");
             scanf(" %[^\n]%*c", choice);
 
             if (strlen(choice) > 1) {
@@ -87,164 +130,96 @@ int main() {
                     accepted_value = true;
                 }
             }
-
-            if (accepted_value == true) {
-                printf("VALID INPUT!!\n\n");
-            } else {
-                printf("INVALID INPUT!!\n\n");
-            }
         }
 
-		if (choice[0] == '1') {
+        // main menu input logic
+		if (choice[0] == '1')
+        {
+            // variables
             char name[100];
-            float* grades = malloc(3 * sizeof(float));
             float gpa = 0;
-            int valid = 1;
+            int valid_gpa = 1;
+            int i;
 
+            // acquire name
             printf("Enter student name: \n");
             fgets(name, 100, stdin);
             name[strcspn(name, "\n")] = '\0';
 
-            // Empty ?
-            if (strlen(name) == 0) {
-                printf("The system doesn't accept an empty input.\n\n");
-                continue;
-            }
+            int is_a_valid_name = string_input_validation(name);
+            if (!is_a_valid_name) continue;
 
-            // All spaces ?
-            int all_spaces = 1;
-            for (int i = 0; name[i] != '\0'; i++) {
-                if (!isspace(name[i])) all_spaces = 0;
-            }
-
-            if (all_spaces == true) {
-                printf("The system doesn't accept an input of all spaces\n\n");
-                continue;
-            }
-
-            for (int i = 0; i < 3; i++) { // parse the char grade here to float
+            // acquire grade and convert to gpa
+            for (i = 0; i < 3; i++) {
                 char grade[100];
-                int grade_is_spaces = 1;
 
                 printf("Enter student's grade: \n");
                 fgets(grade, 100, stdin);
                 grade[strcspn(grade, "\n")] = '\0';
 
-                if (strlen(grade) == 0) {
-                    printf("The system doesn't accept an empty input.");
-                    int valid = 0;
-                    break;
-                }
-
-                for (int i = 0; grade[i] != '\0'; i++) {
-                    if (!isspace(grade[i])) {
-                        grade_is_spaces = 0;
-                    }
-                }
-
-                if (grade_is_spaces == true) {
-                    printf("The system doesn't accept an input of all spaces\n\n");
-                    int valid = 0;
-                    break;
-                }
+                int is_a_valid_grade = string_input_validation(grade);
+                if (!is_a_valid_grade) break;
 
                 float saved_grade = atof(grade);
-
                 if (saved_grade < 60 || saved_grade > 100) {
-                    printf("\nThe grade must be within 60 and 100 only.\n\n");
-                    valid = 0;
+                    printf("\nThe grade must be greater than 60 and less than 100.\n\n");
+                    valid_gpa = 0;
                     break;
-                } else {
-                    grades[i] = saved_grade;
-                    gpa += saved_grade;
                 }
+
+                gpa += saved_grade;
             }
-            if (gpa >= 180 && gpa <= 300) gpa /= 3.0;
+
+            if (!valid_gpa) continue;
             
-            if (valid == true) {
-                add_student(name, gpa); // we should use pointer to grades
-            }
-            else {
-                printf("Input wasn't valid.\n\n");
-                continue;
-            }
-
-		} else if (choice[0] == '2') {
-            if (student_counter == 0) {
-                printf("No student added yet!\n");
-                continue;
-            }
-
-            int index = 0;                             
-            printf("Please give a valid index (0-49)\n");
-            scanf(" %d", &index);
-
-            if (index < 0 || index >= student_counter) {
-                printf("Invalid index!");
-                continue;
-            } else {
-                print_student(index);
-            }
-
-		} else if (choice[0] == '3') {
+            gpa /= 3.0;
+            add_student(name, gpa);
+		}
+        
+        else if (choice[0] == '2') 
+        {
             if (student_counter == 0) {
                 printf("The student list is empty!\n\n");
                 continue;
-            } else {
-                char* choice_sort = malloc(10 * sizeof(char));
-                int contains_spaces_letters = 1;
-
-                printf("Sort by:\n  (1) Name\n  (2) GPA\n");
-                printf("Choose: ");
-
-                fgets(choice_sort, 10, stdin);
-                choice_sort[strcspn(choice_sort, "\n")] = '\0';
-
-                // CHOICE VALIDATION
-                if (strlen(choice_sort) == 0 || choice_sort[0] == '\0') {
-                    printf("The system does not accept an empty input.\n\n");
-                    continue;
-                }
-
-                for (int i = 0; choice_sort[i] != '\0'; i++) {
-                    if (!isspace(choice_sort[i] || !isalpha(choice_sort[i]))) {
-                        contains_spaces_letters = 0;
-                        break;
-                    }
-                }
-
-                if (contains_spaces_letters == true) {
-                    printf("The system does not accept an input that only has spaces in it.\n\n");
-                    continue;
-                }
-
-                int valid_choice_sort = atoi(choice_sort);
-                if (valid_choice_sort > 2 || valid_choice_sort < 1) {
-                    printf("The system does not accept an input greater than 2 or less than 1.\n\n");
-                    continue;
-                }
-
-                if (valid_choice_sort == 1) {
-                    qsort(sorted, student_counter, sizeof(struct students), compare_by_name); 
-                    
-                    printf("\n--- Student List (sorted by name) ---\n");
-                    for (int i = 0; i < student_counter; i++) {
-                        printf("%d. %s - GPA: %.1f\n", i + 1, sorted[i].name, sorted[i].gpa);
-                    }
-                }
-                else if (valid_choice_sort == 2) {
-                    qsort(sorted, student_counter, sizeof(struct students), compare_by_gpa);
-
-                    printf("\n--- Student List (sorted by GPA) ---\n");
-                    for (int i = 0; i < student_counter; i++) {
-                        printf("%d. %s - GPA: %.1f\n", i + 1, sorted[i].name, sorted[i].gpa);
-                    }
-                }
-
-                printf("------------------------------------\n");
-                printf("Total: %d student(s)\n\n", student_counter);
             }
-		} else if (choice[0] == '4') {
+            char* choice_sort = malloc(10 * sizeof(char));
+            int contains_spaces_letters = 1;
+
+            printf("Sort by:\n  (1) Name\n  (2) GPA\n");
+            printf("Choose: ");
+
+            fgets(choice_sort, 10, stdin);
+            choice_sort[strcspn(choice_sort, "\n")] = '\0';
+
+            int is_a_valid_sort = string_input_validation(choice_sort);
+            if (!is_a_valid_sort) continue;
+
+            int valid_choice_sort = atoi(choice_sort);
+            if (valid_choice_sort > 2 || valid_choice_sort < 1) continue;
+
+            if (valid_choice_sort == 1) {
+                qsort(sorted, student_counter, sizeof(struct students), compare_by_name); 
+                
+                printf("\n--- Student List (sorted by name) ---\n");
+                for (int i = 0; i < student_counter; i++) {
+                    printf("%d. %s - GPA: %.1f\n", i + 1, sorted[i].name, sorted[i].gpa);
+                }
+            }
+            else if (valid_choice_sort == 2) {
+                qsort(sorted, student_counter, sizeof(struct students), compare_by_gpa);
+
+                printf("\n--- Student List (sorted by GPA) ---\n");
+                for (int i = 0; i < student_counter; i++) {
+                    printf("%d. %s - GPA: %.1f\n", i + 1, sorted[i].name, sorted[i].gpa);
+                }
+            }
+
+            printf("------------------------------------\n");
+            printf("Total: %d student(s)\n\n", student_counter);
+		}
+        
+        else if (choice[0] == '3') 
+        {
             printf("Goodbye!\n\n");
             break;
         }
