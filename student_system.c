@@ -272,7 +272,8 @@ int main() {
                 printf("The student list is empty!\n\n");
                 continue;
             }
-            char* choice_sort = malloc(10 * sizeof(char));
+
+            char choice_sort[10];
             int contains_spaces_letters = 1;
 
             printf("Sort by:\n  (1) Name\n  (2) GPA\n");
@@ -418,7 +419,6 @@ int main() {
 
     free(saved);
     free(sorted);
-    free(min_max);
 
 	return 0;
 }
