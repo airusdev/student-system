@@ -17,6 +17,10 @@ struct students {
 struct students* saved;
 struct students* sorted;
 
+struct students* partial_name;
+struct students* gpa_range;
+struct students* min_max;
+
 int compare_by_gpa(const void* a, const void* b) {
     const struct students* ia = (const struct students *)a;
     const struct students* ib = (const struct students *)b;
@@ -33,21 +37,107 @@ int compare_by_name(const void* a, const void* b) {
     return strcmp(ia->name, ib->name);
 }
 
-// char* partial_name_search() { // scour the student database and look for partial name match
-//     // create a new array that contains a valid partial_name
-//     // logic goes here
-//     // return the new array
-//     return;
-// }
+void partial_name_search(char* substring) {
+    partial_name = malloc(100 * sizeof(struct students));
+    int valid_count = 0;
 
-// void filter_by_gpa() { // filter by minimum gpa or maximum gpa
-//     // malloc a new array that contains the
-//     return;
-// }
+    for (int i = 0; i < student_counter; i++) {
+        char* current_name = saved[i].name;
+        if (!strstr(current_name, substring)) continue;
 
-// void filter_by_gpa_range() { // filter by an accepted range of gpa
-//     return;
-// }
+        partial_name[valid_count].name = saved[i].name;
+        partial_name[valid_count].gpa = saved[i].gpa;
+        valid_count++;
+    }
+
+    partial_name = realloc(partial_name, (valid_count + 1) * sizeof(struct students));
+
+    printf("\n--- Student List (Substring: %s) ---\n", substring);
+    for (int i = 0; i < valid_count; i++) {
+        printf("%d. %s - GPA: %.1f\n", i + 1, partial_name[i].name, partial_name[i].gpa);
+    }
+
+    printf("------------------------------------\n");
+    printf("Total Searched Students: %d student(s)\n", valid_count);
+    printf("Total Number of Students: %d student(s)\n\n", student_counter); 
+
+    free(partial_name);
+}
+
+void filter_by_gpa(int is_minimum, float gpa_given) {
+    min_max = malloc(100 * sizeof(struct students));
+    int valid_count = 0;
+
+    for (int i = 0; i < student_counter; i++) {
+        if (is_minimum == 1) {
+            if (saved[i].gpa >= gpa_given) {
+                min_max[valid_count].name = saved[i].name;
+                min_max[valid_count].gpa = saved[i].gpa;
+                valid_count++;
+            }
+        } else {
+            if (saved[i].gpa <= gpa_given) {
+                min_max[valid_count].name = saved[i].name;
+                min_max[valid_count].gpa = saved[i].gpa;
+                valid_count++;
+            }
+        }
+    }
+
+    min_max = realloc(min_max, ((valid_count + 1) * sizeof(struct students)));
+
+    // add sort for both minimum and maximum
+    if (is_minimum == 1) {
+        printf("\n--- Student List (Minimum GPA: %.1f) ---\n", gpa_given);
+        qsort(min_max, valid_count, sizeof(struct students), compare_by_gpa);
+
+        for (int i = 0; i < (valid_count); i++) {
+            printf("%d. %s - GPA: %.1f\n", i + 1, min_max[i].name, min_max[i].gpa);
+        }
+    }
+    else {
+        printf("\n--- Student List (Maximum GPA) ---\n");
+        qsort(min_max, valid_count, sizeof(struct students), compare_by_gpa);
+
+        for (int i = 0; i < valid_count; i++) {
+            printf("%d. %s - GPA: %.1f\n", i + 1, min_max[i].name, min_max[i].gpa);
+        }
+    }
+
+    printf("------------------------------------\n");
+    printf("Total Searched Students: %d student(s)\n", valid_count);
+    printf("Total Number of Students: %d student(s)\n\n", student_counter);
+    
+    free(min_max);
+}
+
+void filter_by_gpa_range(float min_gpa, float max_gpa) {
+    gpa_range = malloc(100 * sizeof(struct students));
+    int valid_count = 0;
+
+    for (int i = 0; i < student_counter; i++) {
+        if (saved[i].gpa >= min_gpa && saved[i].gpa <= max_gpa) {
+            gpa_range[valid_count].name = saved[i].name;
+            gpa_range[valid_count].gpa = saved[i].gpa;
+            valid_count++;
+        }
+    }
+
+    gpa_range = realloc(gpa_range, (valid_count + 1) * sizeof(struct students));
+
+    printf("\n--- Student List (GPA Range: %.1f-%.1f) ---\n", min_gpa, max_gpa);
+    qsort(gpa_range, valid_count, sizeof(struct students), compare_by_gpa);
+    
+    for (int i = 0; i < valid_count; i++) {
+        printf("%d. %s - GPA: %.1f\n", i + 1, gpa_range[i].name, gpa_range[i].gpa);
+    }
+
+    printf("------------------------------------\n");
+    printf("Total Searched Students: %d student(s)\n", valid_count);
+    printf("Total Number of Students: %d student(s)\n\n", student_counter);
+
+    free(gpa_range);
+}
 
 void add_student(const char* student, const float gpa) {
 	if (student == NULL) return;
@@ -117,7 +207,7 @@ int main() {
         // validate main menu input
         accepted_value = false; // wait until valid choice
         while (!accepted_value) {
-            printf("Options:\n (1) Add Student\n (2) View All Students\n (3) Exit\n\n");
+            printf("Options:\n (1) Add Student\n (2) View All Students\n (3) Custom Search\n (4) Exit\n\n");
             scanf(" %[^\n]%*c", choice);
 
             if (strlen(choice) > 1) {
@@ -158,7 +248,7 @@ int main() {
                 grade[strcspn(grade, "\n")] = '\0';
 
                 int is_a_valid_grade = string_input_validation(grade);
-                if (!is_a_valid_grade) break;
+                if (!is_a_valid_grade) continue;
 
                 float saved_grade = atof(grade);
                 if (saved_grade < 60 || saved_grade > 100) {
@@ -217,8 +307,104 @@ int main() {
             printf("------------------------------------\n");
             printf("Total: %d student(s)\n\n", student_counter);
 		}
+        else if (choice[0] == '3')
+        {
+            // three options: 
+            if (student_counter == 0) {
+                printf("The student list is empty!\n\n");
+                continue;
+            }
+
+            printf("Search by:\n (1) Partial Name\n (2) Maximum/Minimum GPA\n (3) Accepted GPA Using Range\n");
+            printf("Choose: ");
+
+            char choice_search[10];
+            fgets(choice_search, 10, stdin);
+            choice_search[strcspn(choice_search, "\n")] = '\0';
+
+            int is_valid_search = string_input_validation(choice_search);
+            if (!is_valid_search) continue;
+
+            int search_type = atoi(choice_search);
+            if (search_type < 1 || search_type > 3) continue;
+
+            if (search_type == 1) { // partial name
+               printf("Enter partial name: ");
+
+               char partial_name[10];
+               fgets(partial_name, 10, stdin);
+               partial_name[strcspn(partial_name, "\n")] = '\0';
+
+               int valid_partial = string_input_validation(partial_name);
+               if (!valid_partial) continue;
+
+               partial_name_search(partial_name);
+
+            }
+            else if (search_type == 2) { // minimum gpa or maximum gpa
+                printf("\nSearch by minimum GPA (1) or by maximum GPA (0)?\n");
+                printf("\nChoose: ");
+               
+                char is_minimum[10];
+                fgets(is_minimum, 10, stdin);
+                is_minimum[strcspn(is_minimum, "\n")] = '\0';
+
+                printf("Input a GPA you want to use as parameters: ");
+                char given_gpa[10];
+                fgets(given_gpa, 10, stdin);
+                given_gpa[strcspn(given_gpa, "\n")] = '\0';
+
+                int is_a_valid_type = string_input_validation(is_minimum);
+                int is_a_valid_given_gpa = string_input_validation(given_gpa);
+
+                if (!is_a_valid_type) continue;
+                if (!is_a_valid_given_gpa) continue;
+
+                int min_max_type = atoi(is_minimum);
+                float gpa = atof(given_gpa);
+
+                if (min_max_type < 0 || min_max_type > 1) continue;
+                if (gpa < 60 || gpa > 100) continue;
+
+                filter_by_gpa(min_max_type, gpa);
+
+            }
+            else if (search_type == 3) { // gpa range
+                printf("Input a minimum GPA: ");
+                char minimum_gpa[10];
+                fgets(minimum_gpa, 10, stdin);
+                minimum_gpa[strcspn(minimum_gpa, "\n")] = '\0';
+
+                printf("Input a maximum GPA: ");
+                char maximum_gpa[10];
+                fgets(maximum_gpa, 10, stdin);
+                maximum_gpa[strcspn(maximum_gpa, "\n")] = '\0';
+
+                int is_a_valid_min = string_input_validation(minimum_gpa);
+                int is_a_valid_max = string_input_validation(maximum_gpa);
+
+                if (!is_a_valid_min) continue;
+                if (!is_a_valid_max) continue;
+
+                float min_gpa = atof(minimum_gpa);
+                float max_gpa = atof(maximum_gpa);
+
+                if (min_gpa < 60 || min_gpa > 100) continue;
+                if (max_gpa < 60 || max_gpa > 100) continue;
+
+                if (min_gpa > max_gpa) {
+                    printf("\nMinimum GPA must not be less than the maximum GPA\n\n");
+                    continue;
+                } else if (max_gpa < min_gpa) {
+                    printf("\nMaximum GPA must not be less than minimum GPA");
+                    continue;
+                }
+
+                filter_by_gpa_range(min_gpa, max_gpa);
+            }
+        }
         
-        else if (choice[0] == '3') 
+        else if (choice[0] == '4') 
         {
             printf("Goodbye!\n\n");
             break;
@@ -232,6 +418,7 @@ int main() {
 
     free(saved);
     free(sorted);
+    free(min_max);
 
 	return 0;
 }
